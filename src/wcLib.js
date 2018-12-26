@@ -33,9 +33,28 @@ const countWordsOutputDetails = function (content) {
   return formatter(lines, words, chars);
 };
 
-const wc = function (file, fs) {
+const wc = function (inputArgs, fs) {
+  let firstArg = inputArgs[0];
   let { readFileSync } = fs;
   let readContent = fileReader.bind(null, readFileSync);
+  if(firstArg == '-w'){
+    let file = inputArgs[1];
+    let content = readContent(file);
+    return spaceJustifier(wordCounter(content)) +' '+ file;
+  };
+  if(firstArg == '-c'){
+    let file = inputArgs[1];
+    let content = readContent(file);
+    return spaceJustifier(countBytes(content)) +' '+ file;
+  };
+
+  if(firstArg == '-l'){
+    let file = inputArgs[1];
+    let content = readContent(file);
+    return spaceJustifier(countLines(content)) +' '+ file;
+  };
+
+  let file = firstArg;
   let fileContent = readContent(file);
   return `${countWordsOutputDetails(fileContent)} ${file}`;
 };

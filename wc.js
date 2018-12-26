@@ -3,8 +3,7 @@ const fs = require('fs');
 
 const main = function() {
   let inputArgs = process.argv.slice(2);
-  let inputFile = inputArgs[0];
-  console.log(wc(inputFile, fs));
+  console.log(wc(inputArgs, fs));
 }; 
 
 main();
