@@ -28,7 +28,7 @@ describe('countWordsOutputDetails', function () {
 
   it("should count for spaces also and output should be '       2       6      43'", function () {
     let inputFile = files['words'];
-    let expectedOutput = '       2       6      43';
+    let expectedOutput = '       2       7      43';
     assert.equal(countWordsOutputDetails(inputFile), expectedOutput);
   });
 });
@@ -48,7 +48,7 @@ describe('wc', function () {
 
   it('should count for spaces also', function () {
     let inputFile = 'words';
-    let expectedOutput = '       2       6      43 words';
+    let expectedOutput = '       2       7      43 words';
     assert.equal(wc(inputFile, fs), expectedOutput);
   });
 });
