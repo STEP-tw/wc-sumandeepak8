@@ -33,22 +33,26 @@ const countWordsOutputDetails = function (content) {
   return formatter(lines, words, chars);
 };
 
-const onlyWordOption = function(inputArgs, readContent) {
+const onlyWordOption = function (inputArgs, readContent) {
   let file = inputArgs[1];
   let content = readContent(file);
-  return spaceJustifier(wordCounter(content)) +' '+ file;
+  return spaceJustifier(wordCounter(content)) + ' ' + file;
 };
 
-const onlyByteOption = function(inputArgs, readContent) {
+const onlyByteOption = function (inputArgs, readContent) {
   let file = inputArgs[1];
   let content = readContent(file);
-  return spaceJustifier(countBytes(content)) +' '+ file; 
+  return spaceJustifier(countBytes(content)) + ' ' + file;
 };
 
-const onlyLineOption = function(inputArgs, readContent) {
+const onlyLineOption = function (inputArgs, readContent) {
   let file = inputArgs[1];
   let content = readContent(file);
   return spaceJustifier(countLines(content)) + ' ' + file;
+};
+
+const hasDash = function (firstArg) {
+  return firstArg.startsWith('-');
 };
 
 const wc = function (inputArgs, fs) {
@@ -56,17 +60,14 @@ const wc = function (inputArgs, fs) {
   let { readFileSync } = fs;
   let readContent = fileReader.bind(null, readFileSync);
 
-  if(firstArg == '-w'){
-   return onlyWordOption(inputArgs, readContent);
-  };
-  
-  if(firstArg == '-c'){
-    return onlyByteOption(inputArgs, readContent);
-  };
-
-  if(firstArg == '-l'){
-    return onlyLineOption(inputArgs, readContent);
-  };
+  if (hasDash(firstArg)) {
+    let countDetails = {
+      '-w': onlyWordOption(inputArgs, readContent),
+      '-c': onlyByteOption(inputArgs, readContent),
+      '-l': onlyLineOption(inputArgs, readContent)
+    };
+    return countDetails[firstArg];
+  }
 
   let file = firstArg;
   let fileContent = readContent(file);
@@ -75,5 +76,6 @@ const wc = function (inputArgs, fs) {
 
 module.exports = {
   countWordsOutputDetails,
-  wc
+  wc,
+  hasDash,
 };

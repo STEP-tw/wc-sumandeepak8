@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { countWordsOutputDetails, wc } = require('../src/wcLib.js');
+const { countWordsOutputDetails, wc, hasDash } = require('../src/wcLib.js');
 
 const files = {
   alphabets: 'abcd\nefgh\nijkl\nmnop\nqrst\nuvwx\nyz\n',
@@ -69,4 +69,14 @@ describe('wc', function () {
     let expectedOutput = '       4 numbers';
     assert.equal(wc(inputArgs, fs), expectedOutput);
   });
+});
+
+describe('hasDash', function () {
+  it('should return true for input -w ', function () {
+    assert.equal(hasDash('-w'), true);
+  });
+
+  it('should return false when input does not false', function () {
+    assert.equal(hasDash('l'), false);
+  })
 });
