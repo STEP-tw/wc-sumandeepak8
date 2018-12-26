@@ -10,8 +10,8 @@ const formatter = function(lines, words, chars) {
   return `${spaces} ${lines}${spaces} ${words}${spaces}${chars}`
 };
 
-const countLines = (content)=> content.split(newLine).length -1;
-const wordCounter = (content)=> content.split(newLine).join(space).split(space).length -1;
+const countLines = (content)=> content.split(newLine).length - 1;
+const wordCounter = (content)=> content.split(/ |\n/).length - 1;
 const countBytes = (content)=> content.length;
 
 const countWordsOutputDetails = function(content) {
