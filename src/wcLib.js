@@ -1,13 +1,17 @@
-const spaces = '\t';
 const newLine = '\n';
-const space = ' ';
 
 const fileReader = function(reader, file) {
   return reader(file, 'utf-8');
 };
 
+const spaceJustifier = function(arg) {
+  let length = arg.toString().length;
+  let space = new Array(8-length).fill(' ').join('');
+  return `${space+arg}`;
+};
+
 const formatter = function(lines, words, chars) {
-  return `${spaces} ${lines}${spaces} ${words}${spaces}${chars}`
+   return `${spaceJustifier(lines)+spaceJustifier(words)+spaceJustifier(chars)}`;
 };
 
 const countLines = (content)=> content.split(newLine).length - 1;
