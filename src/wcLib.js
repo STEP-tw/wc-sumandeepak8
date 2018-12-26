@@ -21,7 +21,6 @@ const wc = function(file, fs) {
 };
 
 module.exports = {
-  countWords, gst
-  
-  wc,
+  countWords, 
+  wc
 };

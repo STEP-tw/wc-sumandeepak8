@@ -2,6 +2,7 @@ const assert = require('assert');
 const { countWords, wc } = require('../src/wcLib.js');
 
 let space = '     ';
+
 const files = {
   alphabets: 'abcd\nefgh\nijkl\nmnop\nqrst\nuvwx\nyz',
   numbers: '01\n23\n46\n789',
