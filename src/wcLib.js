@@ -1,30 +1,15 @@
-const newLine = '\n';
+const { parser } = require('./parser.js');
+const { formatter, spaceJustifier } = require('./formatter.js')
+const { 
+  countBytes,
+  countLines,
+  wordCounter,
+  hasDash
+} = require('./util.js')
 
 const fileReader = function (reader, file) {
   return reader(file, 'utf-8');
 };
-
-const spaceJustifier = function (arg) {
-  let length = arg.toString().length;
-  let space = new Array(8 - length).fill(' ').join('');
-  return `${space + arg}`;
-};
-
-const formatter = function (lines, words, chars) {
-  return `${spaceJustifier(lines) + spaceJustifier(words) + spaceJustifier(chars)}`;
-};
-
-const countLines = (content) => content.split(newLine).length - 1;
-
-const wordCounter = function (content) {
-  let words = content.split(/ |\n/);
-  words = words.filter((x) => {
-    return x != '';
-  });
-  return words.length;
-};
-
-const countBytes = (content) => content.length;
 
 const countWordsOutputDetails = function (content) {
   let lines = countLines(content);
@@ -33,42 +18,43 @@ const countWordsOutputDetails = function (content) {
   return formatter(lines, words, chars);
 };
 
-const onlyWordOption = function (inputArgs, readContent) {
-  let file = inputArgs[1];
-  let content = readContent(file);
-  return spaceJustifier(wordCounter(content)) + ' ' + file;
+const onlyWordOption = function (file, content) {
+  return `${spaceJustifier(wordCounter(content))}`;
 };
 
-const onlyByteOption = function (inputArgs, readContent) {
-  let file = inputArgs[1];
-  let content = readContent(file);
-  return spaceJustifier(countBytes(content)) + ' ' + file;
+const onlyByteOption = function (file, content) {
+  return `${spaceJustifier(countBytes(content))}`;
 };
 
-const onlyLineOption = function (inputArgs, readContent) {
-  let file = inputArgs[1];
-  let content = readContent(file);
-  return spaceJustifier(countLines(content)) + ' ' + file;
+const onlyLineOption = function (file, content) {
+  return `${spaceJustifier(countLines(content))}`;
 };
 
-const hasDash = function (firstArg) {
-  return firstArg.startsWith('-');
+const hasOptionOuputData = function (file, option, readContent) {
+  let content = readContent(file);
+  let countDetails = {
+    '-w': onlyWordOption(file, content),
+    '-c': onlyByteOption(file, content),
+    '-l': onlyLineOption(file, content)
+  };
+  return countDetails[option];
 };
 
 const wc = function (inputArgs, fs) {
   let firstArg = inputArgs[0];
   let { readFileSync } = fs;
+  let { options ,files } = parser(inputArgs);
   let readContent = fileReader.bind(null, readFileSync);
-
-  if (hasDash(firstArg)) {
-    let countDetails = {
-      '-w': onlyWordOption(inputArgs, readContent),
-      '-c': onlyByteOption(inputArgs, readContent),
-      '-l': onlyLineOption(inputArgs, readContent)
-    };
-    return countDetails[firstArg];
+  if(options.length != 0){
+    let output ='';
+    let possibleOptions = ['-l', '-w', '-c'];
+    for(let option of possibleOptions){
+      if(options.includes(option)){
+        output  += hasOptionOuputData(files[0], option, readContent);
+      }
+    }
+   return `${output} ${files[0]}`;
   }
-
   let file = firstArg;
   let fileContent = readContent(file);
   return `${countWordsOutputDetails(fileContent)} ${file}`;
