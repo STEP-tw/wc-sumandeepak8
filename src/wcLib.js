@@ -40,6 +40,19 @@ const hasOptionOuputData = function (file, option, readContent) {
   return countDetails[option];
 };
 
+const formattedOutput = function(options, file, readContent) {
+  if(options.length != 0){
+    let output ='';
+    let possibleOptions = ['-l', '-w', '-c'];
+    for(let option of possibleOptions){
+      if(options.includes(option)){
+        output  += hasOptionOuputData(files[0], option, readContent);
+      }
+    }
+   return `${output} ${files[0]}`;
+  }
+};
+
 const wc = function (inputArgs, fs) {
   let firstArg = inputArgs[0];
   let { readFileSync } = fs;

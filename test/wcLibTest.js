@@ -80,3 +80,24 @@ describe('hasDash', function () {
     assert.equal(hasDash('l'), false);
   })
 });
+
+describe('wc with multiple option', function () {
+  it("should return first word counts and then second bytes count where input will be ['-c','-w','alphabets'] ", function () {
+    let inputArgs = ['-c', '-w', 'alphabets'];
+    let expectedOutput = '       7      33 alphabets'
+    assert.deepEqual(wc(inputArgs, fs), expectedOutput);
+  });
+
+  it("should return same output for input ['-c','-w','alphabets'] and input ['-w','-c','alphabets'] ", function () {
+    let input = wc(['-c', '-w', 'alphabets'], fs);
+    let expectedOutput = wc(['-w', '-c', 'alphabets'], fs);
+    assert.deepEqual(input, expectedOutput);
+  });
+
+  it("should return first word counts and then second bytes count where input will be ['-c','-w','-l',alphabets'] ", function () {
+    let input = wc(['-c', '-w', '-l', 'alphabets'], fs);
+    let expectedOutput = wc(['-w', '-c', '-l', 'alphabets'], fs);
+    assert.deepEqual(input, expectedOutput);
+  });
+
+});
