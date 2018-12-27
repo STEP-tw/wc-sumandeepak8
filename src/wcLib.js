@@ -32,7 +32,7 @@ const wordCountOutputData = function (file, option, readContent) {
   return countDetails[option];
 };
 
-const formattedOutput = function (options, files, readContent) {
+const formattedOutput = function (options, readContent, file) {
   let possibleOptions = ['-l', '-w', '-c'];
   if (!options.length) {
     options = possibleOptions;
@@ -41,17 +41,42 @@ const formattedOutput = function (options, files, readContent) {
   let output = '';
   for (let option of possibleOptions) {
     if (options.includes(option)) {
-      output += wordCountOutputData(files[0], option, readContent);
+      output += wordCountOutputData(file, option, readContent);
     }
   }
-  return `${output} ${files[0]}`;
+  return `${output} ${file}`;
 };
 
 const wc = function (inputArgs, fs) {
   let { readFileSync } = fs;
   let { options, files } = parser(inputArgs);
   let readContent = fileReader.bind(null, readFileSync);
-  return formattedOutput(options, files, readContent)
+  let format = formattedOutput.bind(null, options, readContent);
+  let result = files.map(function (file) {
+    return format(file);
+  });
+  if (files.length > 1) {
+    result.push(getLastLine(result));
+  };
+  return result.join('\n');
+};
+
+const getLastLine = function (result) {
+  let tmp = result.map((x) => {
+    x = x.split(' ');
+    x = x.filter((y) => {
+      return isFinite(y) && y != '';
+    })
+    return x;
+  });
+  tmp = tmp.reduce((acc, x) => {
+    acc[0] = +acc[0] + +x[0];
+    acc[1] = +acc[1] + +x[1];
+    acc[2] = +acc[2] + +x[2];
+    return acc;
+  });
+  tmp = spaceJustifier(tmp[0]) + spaceJustifier(tmp[1]) + spaceJustifier(tmp[2]);
+  return tmp + ' total';
 };
 
 module.exports = {

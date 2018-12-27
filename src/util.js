@@ -1,9 +1,5 @@
 const newLine = '\n';
 
-const hasDash = function (firstArg) {
-  return firstArg.startsWith('-');
-};
-
 const countLines = function (content) {
   return content.split(newLine).length - 1;
 };
@@ -19,7 +15,6 @@ const wordCounter = function (content) {
 const countBytes = (content) => content.length;
 
 module.exports = {
-  hasDash,
   countBytes,
   countLines,
   wordCounter,
