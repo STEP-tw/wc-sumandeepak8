@@ -4,11 +4,6 @@ const spaceJustifier = function (arg) {
   return `${space + arg}`;
 };
 
-const formatter = function (lines, words, chars) {
-  return `${spaceJustifier(lines) + spaceJustifier(words) + spaceJustifier(chars)}`;
-};
-
 module.exports = {
-  formatter,
-  spaceJustifier
+  spaceJustifier,
 };

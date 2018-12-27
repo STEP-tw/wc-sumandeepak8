@@ -6,6 +6,19 @@ const filterOption = function (inputArgs) {
   return inputArgs.slice(0, firstIndex);
 };
 
+const optionsSpliter = function (options) {
+  return  options.reduce(function (acc, x) {
+     if (x.length > 2) {
+       x.split('').slice(1).map((e) => {
+         acc.push('-' + e);
+       });
+       return acc;
+     };
+     acc.push(x);
+     return acc;
+   },[]);
+ };
+ 
 const parser = function (inputArgs) {
   let options = filterOption(inputArgs);
   let files = inputArgs.slice(options.length);
@@ -15,4 +28,5 @@ const parser = function (inputArgs) {
 module.exports = {
   parser,
   filterOption,
+  optionsSpliter,
 };

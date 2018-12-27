@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { countWordsOutputDetails, wc, hasDash } = require('../src/wcLib.js');
+const { wc } = require('../src/wcLib.js');
 
 const files = {
   alphabets: 'abcd\nefgh\nijkl\nmnop\nqrst\nuvwx\nyz\n',
@@ -12,26 +12,6 @@ const readFileSync = function (file) {
 };
 
 let fs = { readFileSync };
-
-describe('countWordsOutputDetails', function () {
-  it("should return output like '        7       7      33' ", function () {
-    let inputFile = files['alphabets'];
-    let expectedOutput = '       7       7      33';
-    assert.equal(countWordsOutputDetails(inputFile), expectedOutput);
-  });
-
-  it("should return '       4       4      13' and it should count for /n also", function () {
-    let inputFile = files['numbers'];
-    let expectedOutput = '       4       4      13';
-    assert.equal(countWordsOutputDetails(inputFile), expectedOutput);
-  });
-
-  it("should count for spaces also and output should be '       2       6      43'", function () {
-    let inputFile = files['words'];
-    let expectedOutput = '       2       7      43';
-    assert.equal(countWordsOutputDetails(inputFile), expectedOutput);
-  });
-});
 
 describe('wc', function () {
   it('should return the detail of total lines words and characters and file name', function () {
@@ -69,16 +49,6 @@ describe('wc', function () {
     let expectedOutput = '       4 numbers';
     assert.equal(wc(inputArgs, fs), expectedOutput);
   });
-});
-
-describe('hasDash', function () {
-  it('should return true for input -w ', function () {
-    assert.equal(hasDash('-w'), true);
-  });
-
-  it('should return false when input does not false', function () {
-    assert.equal(hasDash('l'), false);
-  })
 });
 
 describe('wc with multiple option', function () {
