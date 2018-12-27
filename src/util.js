@@ -14,8 +14,15 @@ const wordCounter = function (content) {
 
 const countBytes = (content) => content.length;
 
+const spaceJustifier = function (arg) {
+  let length = arg.toString().length;
+  let space = new Array(8 - length).fill(' ').join('');
+  return `${space + arg}`;
+};
+
 module.exports = {
   countBytes,
   countLines,
   wordCounter,
+  spaceJustifier,
 }

@@ -71,15 +71,23 @@ describe('wc with multiple option', function () {
 });
 
 describe('wc for multiple files and multiple options', function () {
-  it("should return first word counts and then second bytes count where input will be ['-c','-w','-l',alphabets'] ", function () {
-    let input = wc(['-c', '-w', '-l', 'alphabets','numbers'], fs);
-    let expectedOutput = wc(['-w', '-c', '-l', 'alphabets','numbers'], fs);
+  it("should return  same output for ['-c','-w','-l',alphabets', 'numbers'] and [ '-w', '-c', '-l', 'alphabets', 'numbers'] ", function () {
+    let input = wc(['-c', '-w', '-l', 'alphabets', 'numbers'], fs);
+    let expectedOutput = wc(['-w', '-c', '-l', 'alphabets', 'numbers'], fs);
     assert.deepEqual(input, expectedOutput);
   });
 
-  it("should return first word counts and then second bytes count where input will be ['-c','-w','-l',alphabets'] ", function () {
+  it("should return same for ['-c','-w','-l',alphabets', 'words' ] and ['-w', '-c', '-l', 'alphabets', 'words' ] ", function () {
     let input = wc(['-c', '-w', '-l', 'alphabets', 'words'], fs);
     let expectedOutput = wc(['-w', '-c', '-l', 'alphabets', 'words'], fs);
     assert.deepEqual(input, expectedOutput);
+  });
+});
+
+describe('wc for single option and multiple option', function () {
+  it('wc return expected output for multiple file and single option', function () {
+    let input = ['-l', 'alphabets', 'numbers'];
+    let expectedOutput = '       7 alphabets\n       4 numbers\n      11 total';
+    assert.deepEqual(wc(input, fs), expectedOutput);
   });
 });

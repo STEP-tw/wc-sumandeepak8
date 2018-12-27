@@ -1,9 +1,9 @@
 const { parser, optionsSpliter } = require('./parser.js');
-const { spaceJustifier } = require('./formatter.js')
 const {
   countBytes,
   countLines,
   wordCounter,
+  spaceJustifier,
 } = require('./util.js')
 
 const fileReader = function (reader, file) {
@@ -22,7 +22,7 @@ const onlyLineOption = function (file, content) {
   return `${spaceJustifier(countLines(content))}`;
 };
 
-const wordCountOutputData = function (file, option, readContent) {
+const fetchContent = function (file, option, readContent) {
   let content = readContent(file);
   let countDetails = {
     '-w': onlyWordOption(file, content),
@@ -41,7 +41,7 @@ const formattedOutput = function (options, readContent, file) {
   let output = '';
   for (let option of possibleOptions) {
     if (options.includes(option)) {
-      output += wordCountOutputData(file, option, readContent);
+      output += fetchContent(file, option, readContent);
     }
   }
   return `${output} ${file}`;
@@ -70,16 +70,18 @@ const getLastLine = function (result) {
     return x;
   });
   tmp = tmp.reduce((acc, x) => {
-    acc[0] = +acc[0] + +x[0];
-    acc[1] = +acc[1] + +x[1];
-    acc[2] = +acc[2] + +x[2];
+    for (let index = 0; index < x.length; index++) {
+      acc[index] = +acc[index] + +x[index]
+    };
     return acc;
   });
-  tmp = spaceJustifier(tmp[0]) + spaceJustifier(tmp[1]) + spaceJustifier(tmp[2]);
-  return tmp + ' total';
+  tmp = tmp.map((x) => {
+    return spaceJustifier(x);
+  });
+  return tmp.toString() + ' total';
 };
 
 module.exports = {
   wc,
-  wordCountOutputData,
+  fetchContent,
 };
