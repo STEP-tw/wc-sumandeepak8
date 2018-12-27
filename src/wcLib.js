@@ -62,7 +62,7 @@ const wc = function (inputArgs, fs) {
 };
 
 const getLastLine = function (result) {
-  let tmp = result.map((x) => {
+    let tmp = result.map((x) => {
     x = x.split(' ');
     x = x.filter((y) => {
       return isFinite(y) && y != '';
@@ -78,7 +78,7 @@ const getLastLine = function (result) {
   tmp = tmp.map((x) => {
     return spaceJustifier(x);
   });
-  return tmp.toString() + ' total';
+  return tmp.join('') + ' total';
 };
 
 module.exports = {
