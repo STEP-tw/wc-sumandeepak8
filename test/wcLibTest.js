@@ -13,7 +13,7 @@ const readFileSync = function (file) {
 
 let fs = { readFileSync };
 
-describe('wc', function () {
+describe('wc for single file without option', function () {
   it('should return the detail of total lines words and characters and file name', function () {
     let inputFile = ["alphabets"];
     let expectedOutput = '       7       7      33 alphabets';
@@ -88,6 +88,18 @@ describe('wc for single option and multiple option', function () {
   it('wc return expected output for multiple file and single option', function () {
     let input = ['-l', 'alphabets', 'numbers'];
     let expectedOutput = '       7 alphabets\n       4 numbers\n      11 total';
+    assert.deepEqual(wc(input, fs), expectedOutput);
+  });
+
+  it('wc return expected output for multiple file and two  option -l -c ', function () {
+    let input = ['-l', '-c', 'alphabets', 'numbers'];
+    let expectedOutput = '       7      33 alphabets\n       4      13 numbers\n      11      46 total';
+    assert.deepEqual(wc(input, fs), expectedOutput);
+  });
+
+  it('wc return expectedOutput for three files and four options ', function () {
+    let input = ['-lcw','-l', 'alphabets', 'numbers', 'words'];
+    let expectedOutput = "       7       7      33 alphabets\n       4       4      13 numbers\n       2       7      43 words\n      13      18      89 total";
     assert.deepEqual(wc(input, fs), expectedOutput);
   });
 });
