@@ -69,12 +69,14 @@ const getLastLine = function (result) {
     })
     return x;
   });
+  
   tmp = tmp.reduce((acc, x) => {
     for (let index = 0; index < x.length; index++) {
       acc[index] = +acc[index] + +x[index]
     };
     return acc;
   });
+  
   tmp = tmp.map((x) => {
     return spaceJustifier(x);
   });
