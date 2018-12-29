@@ -1,6 +1,6 @@
-const { parser, optionsSpliter } = require('./parser.js');
+const { parser, optionsParser } = require('./parser.js');
 const {
-  countBytes,
+    countBytes,
   countLines,
   wordCounter,
   spaceJustifier,
@@ -10,7 +10,7 @@ const fileReader = function (reader, file) {
   return reader(file, 'utf-8');
 };
 
-const fetchContent = function (file, option, readContent) {
+const fetchCount = function (file, option, readContent) {
   let content = readContent(file);
   let countDetails = {
     '-w': wordCounter(content),
@@ -20,69 +20,75 @@ const fetchContent = function (file, option, readContent) {
   return countDetails[option];
 };
 
-const formattedOutput = function (options, readContent, file) {
-  let possibleOptions = ['-l', '-w', '-c'];
-  if (!options.length) {
-    options = possibleOptions;
-  };
-  options = optionsSpliter(options);
-  let singlefileCountValues = [];
-  let spacedCounts = '';
-  for (let option of possibleOptions) {
+const spaceCountReducer = function (inputArgs) {
+  let { options, file, readContent, possibleOptions } = inputArgs;
+  return possibleOptions.reduce((accumulator, option) => {
     if (options.includes(option)) {
-      let count = fetchContent(file, option, readContent);
-      spacedCounts += spaceJustifier(count);
-      singlefileCountValues.push(count);
+      let count = fetchCount(file, option, readContent);
+      accumulator.spacedCounts += spaceJustifier(count);
+      accumulator.fileCountValues.push(count)
     }
+    return accumulator;
+  }, { spacedCounts: '', fileCountValues: [] })
+};
+
+const getCountDetails = function (options, readContent, file) {
+  let possibleOptions = ['-l', '-w', '-c'];
+  options = optionsParser(options, possibleOptions);
+  let inputArgs = { options, file, readContent, possibleOptions };
+  let fileCountOutput = spaceCountReducer(inputArgs);
+  fileCountOutput.spacedCounts += ` ${file}`;
+  return fileCountOutput;
+};
+
+const spacedCountsOutput = function (countWordResult) {
+  return countWordResult.map((x) => {
+    return x['spacedCounts'];
+  });
+};
+
+const getlastLineDetails = function (countWordResult) {
+  return countWordResult.map((x) => {
+    return x['fileCountValues'];
+  });
+};
+
+const formattedCounts = function (filesCount, countWordResult) {
+  if (filesCount.length > 1) {
+    let totalCount = getlastLineDetails(countWordResult);
+    filesCount.push(getLastLine(totalCount));
   };
-  let fileOuput = spacedCounts + ' ' + file;
-  return { fileOuput, singlefileCountValues };
-};
+  return filesCount.join('\n');
 
-const wordCountOutput = function (countWordResult) {
-  return countWordResult.map((x) => {
-    return x['fileOuput'];
-  });
-};
-
-const lastLineOutput = function (countWordResult) {
-  return countWordResult.map((x) => {
-    return x['singlefileCountValues'];
-  });
 };
 
 const wc = function (inputArgs, fs) {
   let { readFileSync } = fs;
   let { options, files } = parser(inputArgs);
   let readContent = fileReader.bind(null, readFileSync);
-  let format = formattedOutput.bind(null, options, readContent);
+  let spacesAndCounts = getCountDetails.bind(null, options, readContent);
   let countWordResult = files.map(function (file) {
-    return format(file);
+    return spacesAndCounts(file);
   });
-  let filesCount = wordCountOutput(countWordResult);
-  let totalCount = lastLineOutput(countWordResult);
-
-  if (files.length > 1) {
-    filesCount.push(getLastLine(totalCount));
-  };
-  return filesCount.join('\n');
+  let filesCount = spacedCountsOutput(countWordResult);
+  return formattedCounts(filesCount, countWordResult);
 };
 
 const getLastLine = function (countDetails) {
   let counts = countDetails;
   counts = counts.reduce((acc, x) => {
-    x.forEach((e,i)=>{
+    x.forEach((e, i) => {
       acc[i] += e
     });
     return acc;
-  },);
+  });
   let spacedLastLine = counts.map((x) => {
     return spaceJustifier(x);
   });
   return spacedLastLine.join('') + ' total';
 };
 
+
 module.exports = {
   wc,
-  fetchContent,
 };
