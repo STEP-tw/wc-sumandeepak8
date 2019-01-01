@@ -4,7 +4,7 @@ const {
   countLines,
   wordCounter,
   spaceJustifier,
-} = require('./util.js')
+} = require('./util.js');
 
 const fileReader = function (reader, file) {
   return reader(file, 'utf-8');
@@ -76,14 +76,14 @@ const wc = function (inputArgs, fs) {
 
 const getLastLine = function (countDetails) {
   let counts = countDetails;
-  counts = counts.reduce((acc, x) => {
-    x.forEach((e, i) => {
-      acc[i] += e
+  counts = counts.reduce((acc, countArray) => {
+    countArray.forEach((element, index) => {
+      acc[index] += element;
     });
     return acc;
   });
-  let spacedLastLine = counts.map((x) => {
-    return spaceJustifier(x);
+  let spacedLastLine = counts.map((count) => {
+    return spaceJustifier(count);
   });
   return spacedLastLine.join('') + ' total';
 };
