@@ -1,9 +1,9 @@
 const { parser, optionsParser } = require('./parser.js');
 const {
-    countBytes,
+  countBytes,
   countLines,
   wordCounter,
-  spaceJustifier,
+  spaceJustifier
 } = require('./util.js');
 
 const fileReader = function (reader, file) {
@@ -22,14 +22,17 @@ const fetchCount = function (file, option, readContent) {
 
 const spaceCountReducer = function (inputArgs) {
   let { options, file, readContent, possibleOptions } = inputArgs;
-  return possibleOptions.reduce((accumulator, option) => {
-    if (options.includes(option)) {
-      let count = fetchCount(file, option, readContent);
-      accumulator.spacedCounts += spaceJustifier(count);
-      accumulator.fileCountValues.push(count)
-    }
-    return accumulator;
-  }, { spacedCounts: '', fileCountValues: [] })
+  return possibleOptions.reduce(
+    (accumulator, option) => {
+      if (options.includes(option)) {
+        let count = fetchCount(file, option, readContent);
+        accumulator.spacedCounts += spaceJustifier(count);
+        accumulator.fileCountValues.push(count);
+      }
+      return accumulator;
+    },
+    { spacedCounts: '', fileCountValues: [] }
+  );
 };
 
 const getCountDetails = function (options, readContent, file) {
@@ -42,24 +45,23 @@ const getCountDetails = function (options, readContent, file) {
 };
 
 const spacedCountsOutput = function (countWordResult) {
-  return countWordResult.map((x) => {
+  return countWordResult.map(x => {
     return x['spacedCounts'];
   });
 };
 
 const getlastLineDetails = function (countWordResult) {
-  return countWordResult.map((x) => {
+  return countWordResult.map(x => {
     return x['fileCountValues'];
   });
 };
 
-const formattedCounts = function (filesCount, countWordResult) {
-  if (filesCount.length > 1) {
+const formattedCounts = function (spacedCountWithFileName, countWordResult) {
+  if (spacedCountWithFileName.length > 1) {
     let totalCount = getlastLineDetails(countWordResult);
-    filesCount.push(getLastLine(totalCount));
-  };
-  return filesCount.join('\n');
-
+    spacedCountWithFileName.push(getLastLine(totalCount));
+  }
+  return spacedCountWithFileName.join('\n');
 };
 
 const wc = function (inputArgs, fs) {
@@ -70,25 +72,28 @@ const wc = function (inputArgs, fs) {
   let countWordResult = files.map(function (file) {
     return spacesAndCounts(file);
   });
-  let filesCount = spacedCountsOutput(countWordResult);
-  return formattedCounts(filesCount, countWordResult);
+  let spacedCountWithFileName = spacedCountsOutput(countWordResult);
+  return formattedCounts(spacedCountWithFileName, countWordResult);
 };
 
-const getLastLine = function (countDetails) {
-  let counts = countDetails;
-  counts = counts.reduce((acc, countArray) => {
+const zipper = function (countDetails) {
+  let cd = countDetails.map(x => x.slice());
+  return cd.reduce((acc, countArray) => {
     countArray.forEach((element, index) => {
       acc[index] += element;
     });
     return acc;
   });
-  let spacedLastLine = counts.map((count) => {
+};
+
+const getLastLine = function (countDetails) {
+  let counts = zipper(countDetails);
+  let spacedLastLine = counts.map(count => {
     return spaceJustifier(count);
   });
   return spacedLastLine.join('') + ' total';
 };
 
-
 module.exports = {
-  wc,
+  wc
 };
