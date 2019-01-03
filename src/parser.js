@@ -8,16 +8,10 @@ const filterOption = function (inputArgs) {
 
 const optionsSpliter = function (options) {
   return options.reduce(function (acc, x) {
-    if (x.length > 1) {
-      x.split("").map(e => {
-          acc.push(e);
-        });
-      return acc;
-    }
-    acc.push(x);
+    acc = acc.concat(x.split(''));
     return acc;
   }, []);
-};
+}
 
 const optionsParser = function (options, possibleOptions) {
   if (!options.length) {
