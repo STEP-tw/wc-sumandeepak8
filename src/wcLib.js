@@ -13,33 +13,36 @@ const fileReader = function (reader, file) {
 const fetchCount = function (file, option, readContent) {
   let content = readContent(file);
   let countDetails = {
-    '-w': wordCounter(content),
-    '-c': countBytes(content),
-    '-l': countLines(content)
+    'w': wordCounter(content),
+    'c': countBytes(content),
+    'l': countLines(content)
   };
   return countDetails[option];
 };
 
-const spaceCountReducer = function (inputArgs) {
+const spaceAndCount = function (inputArgs) {
   let { options, file, readContent, possibleOptions } = inputArgs;
-  return possibleOptions.reduce(
-    (accumulator, option) => {
-      if (options.includes(option)) {
-        let count = fetchCount(file, option, readContent);
-        accumulator.spacedCounts += spaceJustifier(count);
-        accumulator.fileCountValues.push(count);
-      }
-      return accumulator;
-    },
-    { spacedCounts: '', fileCountValues: [] }
-  );
+  let reducerFunc = reducer.bind(null, options, file, readContent);
+  return possibleOptions.reduce(reducerFunc, {
+    spacedCounts: '',
+    fileCountValues: []
+  });
+};
+
+const reducer = function (options, file, readContent, accumulator, option) {
+  if (options.includes(option)) {
+    let count = fetchCount(file, option, readContent);
+    accumulator.spacedCounts += spaceJustifier(count);
+    accumulator.fileCountValues.push(count);
+  }
+  return accumulator;
 };
 
 const getCountDetails = function (options, readContent, file) {
-  let possibleOptions = ['-l', '-w', '-c'];
+  let possibleOptions = ['l', 'w', 'c'];
   options = optionsParser(options, possibleOptions);
   let inputArgs = { options, file, readContent, possibleOptions };
-  let fileCountOutput = spaceCountReducer(inputArgs);
+  let fileCountOutput = spaceAndCount(inputArgs);
   fileCountOutput.spacedCounts += ` ${file}`;
   return fileCountOutput;
 };
@@ -76,7 +79,7 @@ const wc = function (inputArgs, fs) {
   return formattedCounts(spacedCountWithFileName, countWordResult);
 };
 
-const zipper = function (countDetails) {
+const getTotalCounts = function (countDetails) {
   let cd = countDetails.map(x => x.slice());
   return cd.reduce((acc, countArray) => {
     countArray.forEach((element, index) => {
@@ -87,11 +90,11 @@ const zipper = function (countDetails) {
 };
 
 const getLastLine = function (countDetails) {
-  let counts = zipper(countDetails);
+  let counts = getTotalCounts(countDetails);
   let spacedLastLine = counts.map(count => {
     return spaceJustifier(count);
-  });
-  return spacedLastLine.join('') + ' total';
+  }).join('');
+  return `${spacedLastLine} total`;
 };
 
 module.exports = {
