@@ -1,8 +1,9 @@
+const startsWithDash = x => x.startsWith('-');
+
+const getIndex = element => !startsWithDash(element);
+
 const filterOption = function (inputArgs) {
-  let optionCandidatesResult = inputArgs.map(function (x) {
-    return x.startsWith("-");
-  });
-  let firstIndex = optionCandidatesResult.indexOf(false);
+  let firstIndex = inputArgs.findIndex(getIndex);
   return inputArgs.slice(0, firstIndex).map(x => x.slice(1));
 };
 
